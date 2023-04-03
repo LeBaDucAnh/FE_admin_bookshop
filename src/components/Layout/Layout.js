@@ -31,7 +31,11 @@ import Maps from "../../pages/maps";
 import Tables from "../../pages/tables";
 import Icons from "../../pages/icons";
 import Charts from "../../pages/charts";
-
+import Books from "../../pages/books/Books";
+import AddBook from "../../pages/books/Add_book";
+import DetailBook from "../../pages/books/Detail_book";
+import UpdateBook from "../../pages/books/Update_book";
+import Order from "../../pages/order/order";
 // context
 import { useLayoutState } from "../../context/LayoutContext";
 
@@ -54,6 +58,7 @@ function Layout(props) {
             <div className={classes.fakeToolbar} />
             <Switch>
               <Route path="/app/dashboard" component={Dashboard} />
+              <Route path="/app/books" component={Books}/>
               <Route path="/app/typography" component={Typography} />
               <Route path="/app/tables" component={Tables} />
               <Route path="/app/notifications" component={Notifications} />
@@ -65,6 +70,10 @@ function Layout(props) {
               <Route path="/app/ui/maps" component={Maps} />
               <Route path="/app/ui/icons" component={Icons} />
               <Route path="/app/ui/charts" component={Charts} />
+              <Route path="/app/book/addbook" component={AddBook} />
+              <Route path="/app/book/updatebook" component={UpdateBook} />
+              <Route path="/app/book/detailbook" component={DetailBook}/>
+              <Route path="/app/order" component={Order}/>
             </Switch>
             <Box
               mt={5}
