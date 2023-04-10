@@ -36,58 +36,6 @@ import {
 } from "../../context/LayoutContext";
 import { useUserDispatch, signOut } from "../../context/UserContext";
 
-const messages = [
-  {
-    id: 0,
-    variant: "warning",
-    name: "Jane Hew",
-    message: "Hey! How is it going?",
-    time: "9:32",
-  },
-  {
-    id: 1,
-    variant: "success",
-    name: "Lloyd Brown",
-    message: "Check out my new Dashboard",
-    time: "9:18",
-  },
-  {
-    id: 2,
-    variant: "primary",
-    name: "Mark Winstein",
-    message: "I want rearrange the appointment",
-    time: "9:15",
-  },
-  {
-    id: 3,
-    variant: "secondary",
-    name: "Liana Dutti",
-    message: "Good news from sale department",
-    time: "9:09",
-  },
-];
-
-const notifications = [
-  { id: 0, color: "warning", message: "Check out this awesome ticket" },
-  {
-    id: 1,
-    color: "success",
-    type: "info",
-    message: "What is the best way to get ...",
-  },
-  {
-    id: 2,
-    color: "secondary",
-    type: "notification",
-    message: "This is just a simple notification",
-  },
-  {
-    id: 3,
-    color: "primary",
-    type: "e-commerce",
-    message: "12 new orders has arrived today",
-  },
-];
 
 export default function Header(props) {
   var classes = useStyles();
@@ -98,10 +46,6 @@ export default function Header(props) {
   var userDispatch = useUserDispatch();
 
   // local
-  var [mailMenu, setMailMenu] = useState(null);
-  var [isMailsUnread, setIsMailsUnread] = useState(true);
-  var [notificationsMenu, setNotificationsMenu] = useState(null);
-  var [isNotificationsUnread, setIsNotificationsUnread] = useState(true);
   var [profileMenu, setProfileMenu] = useState(null);
   var [isSearchOpen, setSearchOpen] = useState(false);
 
@@ -137,7 +81,7 @@ export default function Header(props) {
           )}
         </IconButton>
         <Typography variant="h6" weight="medium" className={classes.logotype}>
-          React Material Admin
+          Book Shop Admin
         </Typography>
         <div className={classes.grow} />
 
@@ -162,7 +106,7 @@ export default function Header(props) {
             }}
           />
         </div>
-        <IconButton
+        {/* <IconButton
           color="inherit"
           aria-haspopup="true"
           aria-controls="mail-menu"
@@ -178,8 +122,8 @@ export default function Header(props) {
           >
             <NotificationsIcon classes={{ root: classes.headerIcon }} />
           </Badge>
-        </IconButton>
-        <IconButton
+        </IconButton> */}
+        {/* <IconButton
           color="inherit"
           aria-haspopup="true"
           aria-controls="mail-menu"
@@ -195,7 +139,7 @@ export default function Header(props) {
           >
             <MailIcon classes={{ root: classes.headerIcon }} />
           </Badge>
-        </IconButton>
+        </IconButton> */}
         <IconButton
           aria-haspopup="true"
           color="inherit"
@@ -205,7 +149,7 @@ export default function Header(props) {
         >
           <AccountIcon classes={{ root: classes.headerIcon }} />
         </IconButton>
-        <Menu
+        {/* <Menu
           id="mail-menu"
           open={Boolean(mailMenu)}
           anchorEl={mailMenu}
@@ -259,8 +203,8 @@ export default function Header(props) {
             Send New Message
             <SendIcon className={classes.sendButtonIcon} />
           </Fab>
-        </Menu>
-        <Menu
+        </Menu> */}
+        {/* <Menu
           id="notifications-menu"
           open={Boolean(notificationsMenu)}
           anchorEl={notificationsMenu}
@@ -277,7 +221,7 @@ export default function Header(props) {
               <Notification {...notification} typographyVariant="inherit" />
             </MenuItem>
           ))}
-        </Menu>
+        </Menu> */}
         <Menu
           id="profile-menu"
           open={Boolean(profileMenu)}
@@ -289,15 +233,7 @@ export default function Header(props) {
         >
           <div className={classes.profileMenuUser}>
             <Typography variant="h4" weight="medium">
-              John Smith
-            </Typography>
-            <Typography
-              className={classes.profileMenuLink}
-              component="a"
-              color="primary"
-              href="https://flatlogic.com"
-            >
-              Flalogic.com
+              Admin
             </Typography>
           </div>
           <MenuItem
@@ -308,7 +244,7 @@ export default function Header(props) {
           >
             <AccountIcon className={classes.profileMenuIcon} /> Profile
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             className={classNames(
               classes.profileMenuItem,
               classes.headerMenuItem,
@@ -323,7 +259,7 @@ export default function Header(props) {
             )}
           >
             <AccountIcon className={classes.profileMenuIcon} /> Messages
-          </MenuItem>
+          </MenuItem> */}
           <div className={classes.profileMenuUser}>
             <Typography
               className={classes.profileMenuLink}

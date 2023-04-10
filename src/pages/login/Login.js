@@ -18,6 +18,7 @@ import useStyles from "./styles";
 // logo
 import logo from "./logo.svg";
 import google from "../../images/google.svg";
+import learn from "./learn.jpg";
 
 // context
 import { useUserDispatch, loginUser } from "../../context/UserContext";
@@ -51,7 +52,7 @@ function Login(props) {
             textColor="primary"
             centered
           >
-            <Tab label="Login" classes={{ root: classes.tab }} />
+            <Tab label="Đăng nhập" classes={{ root: classes.tab }} />
             {/* <Tab label="New User" classes={{ root: classes.tab }} /> */}
           </Tabs>
           {activeTabId === 0 && (
@@ -125,7 +126,7 @@ function Login(props) {
                     color="primary"
                     size="large"
                   >
-                    Login
+                    Đăng nhập
                   </Button>
                 )}
                 <Button
@@ -133,7 +134,7 @@ function Login(props) {
                   size="large"
                   className={classes.forgetButton}
                 >
-                  Forget Password
+                  Quên mật khẩu
                 </Button>
               </div>
             </React.Fragment>
