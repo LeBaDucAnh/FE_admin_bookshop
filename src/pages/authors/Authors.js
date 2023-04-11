@@ -11,38 +11,12 @@ import classnames from "classnames";
 // data
 import mock from "../dashboard/mock";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-
-
-const datatableData = [
-    ["121231", "Yonkers","012313112", 100, "2023-03-21 16:00:01.675556", "2023-03-21 16:00:01.675556"],
-    ["John Walsh", "Example Inc.", "Hartford", "CT"],
-    ["Bob Herm", "Example Inc.", "Tampa", "FL"],
-    ["James Houston", "Example Inc.", "Dallas", "TX"],
-    ["Prabhakar Linwood", "Example Inc.", "Hartford", "CT"],
-    ["Kaui Ignace", "Example Inc.", "Yonkers", "NY"],
-    ["Esperanza Susanne", "Example Inc.", "Hartford", "CT"],
-    ["Christian Birgitte", "Example Inc.", "Tampa", "FL"],
-    ["Meral Elias", "Example Inc.", "Hartford", "CT"],
-    ["Deep Pau", "Example Inc.", "Yonkers", "NY"],
-    ["Sebastiana Hani", "Example Inc.", "Dallas", "TX"],
-    ["Marciano Oihana", "Example Inc.", "Yonkers", "NY"],
-    ["Brigid Ankur", "Example Inc.", "Dallas", "TX"],
-    ["Anna Siranush", "Example Inc.", "Yonkers", "NY"],
-    ["Avram Sylva", "Example Inc.", "Hartford", "CT"],
-    ["Serafima Babatunde", "Example Inc.", "Tampa", "FL"],
-    ["Gaston Festus", "Example Inc.", "Tampa", "FL"],
-];
-
-const states = {
-    sent: "success",
-    pending: "warning",
-    declined: "secondary",
-  };
-
-console.log(datatableData);
+import axios from "axios";
+import { BASE_URL } from "../../config";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -50,23 +24,88 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default function Books() {
+export default function Authors() {
     const classes = useStyles();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [authorList, setAuthorList] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const authors = await axios.get(BASE_URL + "/api/author/authors/");
+            setAuthorList(authors.data);
+        };
+        fetchData();
+    }, []);
 
     return (
         <>
-            <PageTitle title="Quản lý đơn hàng" />
-
+            <PageTitle title="Tác giả" />
+            <Link to="/app/author/addauthor"><Button
+                variant="primary"
+                onClick={() => console.log("Add")}>
+                Thêm tác giả mới
+            </Button></Link>
             <Grid container spacing={4} style={{ marginTop: "20px" }}>
                 <Grid item xs={12}>
                     <MUIDataTable
-                        title="Danh sách đơn hàng"
-                        data={datatableData}
+                        title="Danh sách tác giả"
+                        data={authorList}
                         columns={
-                            ["Mã đơn hàng", "Họ tên", "Số điện thoại", "Tổng tiền", "Thời gian tạo", "Thời gian cập nhật","Trạng thái",
+                            [{
+                                name: "id",
+                                label: "ID",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "author_name",
+                                label: "Tên tác giả",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "author_image",
+                                label: "Hình ảnh",
+                                options: {
+                                    filter: false,
+                                    sort: false,
+                                    customBodyRender: (value, tableMeta, updateValue) => {
+                                      return (
+                                        <img src={BASE_URL + value} alt={tableMeta.rowData[0]} style={{ width: 100 }} />
+                                      );
+                                    },
+                                  },
+                              },
+                              {
+                                name: "description",
+                                label: "Mô tả",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "created_at",
+                                label: "Thời gian tạo",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "updated_at",
+                                label: "Thời gian cập nhật",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
                                 {
                                     name: "",
                                     options: {
@@ -75,26 +114,26 @@ export default function Books() {
                                         customBodyRender: (value, tableMeta, updateValue) => {
                                             return (
                                                 <div className={classes.buttonsContainer}>
-                                                    <Link to="/app/book/detailbook">
+                                                    {/* <Link to="/app/author/detailauthor">
                                                     <Button
                                                         variant="success"
                                                         onClick={() => console.log("Detail")}
                                                     >
                                                         Chi tiết
-                                                    </Button></Link>
+                                                    </Button></Link> */}
                                                     {" "}
-                                                    <Link to="/app/book/updatebook">
+                                                    <Link to="/app/author/updateauthor">
                                                     <Button
                                                         variant="primary"
                                                         onClick={() => console.log("Update")}
                                                     >
-                                                        Sửa
+                                                        <EditIcon/>
                                                     </Button></Link>
                                                     {" "}
                                                     <Button
                                                         variant="danger"
                                                         onClick={handleShow}
-                                                    >Xóa</Button>
+                                                    ><DeleteIcon/></Button>
                                                 </div>
                                             );
                                         }
@@ -105,6 +144,12 @@ export default function Books() {
                         }
                         options={{
                             filterType: "checkbox",
+                            selectableRows: "none",
+                            responsive: "standard",
+                            filter: true,
+                            search: true,
+                            pagination: true,
+                            rowsPerPageOptions: [5, 10, 20],
                         }}
                     />
                     <Modal show= {show} onHide ={handleClose} centered>

@@ -51,16 +51,10 @@ export default function Dashboard(props) {
 
   return (
     <>
-      <PageTitle title="Dashboard" button={<Button
-      variant="contained"
-      size="medium"
-      color="secondary"
-    >
-        Latest Reports
-    </Button>} />
+      <PageTitle title="Dashboard"/>
       <Grid container spacing={4}>
         <Grid item lg={3} md={4} sm={6} xs={12}>
-          <Widget
+          {/* <Widget
             title="Visits Today"
             upperTitle
             bodyClass={classes.fullHeightBody}
@@ -121,10 +115,10 @@ export default function Dashboard(props) {
                 <Typography size="md">3.25%</Typography>
               </Grid>
             </Grid>
-          </Widget>
+          </Widget> */}
         </Grid>
         <Grid item lg={3} md={8} sm={6} xs={12}>
-          <Widget
+          {/* <Widget
             title="App Performance"
             upperTitle
             className={classes.card}
@@ -184,10 +178,10 @@ export default function Dashboard(props) {
                 className={classes.progress}
               />
             </div>
-          </Widget>
+          </Widget> */}
         </Grid>
         <Grid item lg={3} md={8} sm={6} xs={12}>
-          <Widget
+          {/* <Widget
             title="Server Overview"
             upperTitle
             className={classes.card}
@@ -265,10 +259,10 @@ export default function Dashboard(props) {
                 </ResponsiveContainer>
               </div>
             </div>
-          </Widget>
+          </Widget> */}
         </Grid>
         <Grid item lg={3} md={4} sm={6} xs={12}>
-          <Widget title="Revenue Breakdown" upperTitle className={classes.card}>
+          {/* <Widget title="Revenue Breakdown" upperTitle className={classes.card}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <ResponsiveContainer width="100%" height={144}>
@@ -305,7 +299,7 @@ export default function Dashboard(props) {
                 </div>
               </Grid>
             </Grid>
-          </Widget>
+          </Widget> */}
         </Grid>
         <Grid item xs={12}>
           <Widget
@@ -407,14 +401,14 @@ export default function Dashboard(props) {
             </ResponsiveContainer>
           </Widget>
         </Grid>
-        {mock.bigStat.map(stat => (
+        {/* {mock.bigStat.map(stat => (
           <Grid item md={4} sm={6} xs={12} key={stat.product}>
             <BigStat {...stat} />
           </Grid>
-        ))}
+        ))} */}
         <Grid item xs={12}>
           <Widget
-            title="Support Requests"
+            title="Đơn hàng gần đây"
             upperTitle
             noBodyPadding
             bodyClass={classes.tableWidget}
