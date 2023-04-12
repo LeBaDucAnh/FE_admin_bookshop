@@ -28,16 +28,19 @@ export default function Books(props) {
     const classes = useStyles();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = (bookID) => {
+        setBookToDelete(bookID);
+        setShow(true);
+    }
     const [bookList, setBookList] = useState([]);
     const history = useHistory();
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [bookToDelete, setBookToDelete] = useState(null);
 
-    const handleDeleteClick = (book) => {
-        setBookToDelete(book);
-        setOpenDeleteModal(true);
-    };
+    // const handleDeleteClick = (book) => {
+    //     setBookToDelete(book);
+    //     setOpenDeleteModal(true);
+    // };
 
     const handleViewDetail = (rowData) => {
         const id = rowData[0];
@@ -50,7 +53,22 @@ export default function Books(props) {
         console.log(id);
         history.push(`/app/book/updatebook/${id}`);
     };
- };
+    
+    const handleDelete = () => {
+        axios.delete(`${BASE_URL}/api/book/book/${bookToDelete}/`)
+          .then(() => {
+            //close modal
+            console.log("Xóa thành công");
+            setShow(false);
+            history.push(`/app/books`);
+            //reload table data
+            // reloadTableData();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+      
 
     // const handleDeleteConfirm = () => {
     //     setIsDeleting(true);
@@ -71,7 +89,7 @@ export default function Books(props) {
     // Sử dụng useEffect hook để lấy danh sách 
     useEffect(() => {
         const fetchData = async () => {
-            const books = await axios.get("http://127.0.0.1:8000/api/book/books/");
+            const books = await axios.get( BASE_URL + "/api/book/books/");
             setBookList(books.data);
         };
         fetchData();
@@ -187,7 +205,7 @@ export default function Books(props) {
                                                 {" "}
                                                 <Button
                                                         variant="danger"
-                                                        onClick={handleShow(tableMeta.rowData)}
+                                                        onClick={handleShow(tableMeta.rowData[0])}
                                                     >Xóa</Button>
                                                 {/* <Button variant="danger" onClick={() => handleDeleteClick(tableMeta.rowData)}>
                                                     Xóa
@@ -207,6 +225,7 @@ export default function Books(props) {
                             pagination: true,
                             rowsPerPageOptions: [5, 10, 20],
                         }}
+                        
                     />
                     <Modal show={show} onHide={handleClose} centered>
                     {/* <Modal open={selectedBook !== null} onClose={() => setSelectedBook(null)}> */}
@@ -217,7 +236,7 @@ export default function Books(props) {
                             Bạn chắc chắn xóa trường dữ liệu này?
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="primary"onClick={handleDeleteConfirm}>
+                            <Button variant="primary"onClick={handleDelete}>
                                 Đồng ý
                             </Button>
                             {" "}
