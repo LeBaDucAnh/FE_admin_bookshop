@@ -7,17 +7,17 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
 
-function UpdateBook({match}) {
+function UpdateBook({props}) {
   const [book, setBook] = useState({});
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [loading, setLoading] = useState(true);
   const history = useHistory();
-  const {id} = match.params;
 
   useEffect(() => {
-    axios.get(BASE_URL + "/api/book/books/"+ id + '/')
+    axios.get(`${BASE_URL}/api/book/books/${props.bookID}/`)
       .then(res => {
+        console.log(props.bookID);
         setBook(res.data);
         setLoading(false);
       })
@@ -67,7 +67,7 @@ console.log(book);
 
   const handleSubmit = e => {
     e.preventDefault();
-    axios.put(BASE_URL + "/api/book/book/"+ id + '/', book)
+    axios.put(BASE_URL + "/api/book/book/"+ props.id + '/', book)
       .then(res => {
         history.push('/books/');
       })

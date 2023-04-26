@@ -17,6 +17,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@material-ui/icons";
+import AddAuthorModal from "./Add_author";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -29,6 +30,7 @@ export default function Authors() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [showModal, setShowModal] = useState(false);
     const [authorList, setAuthorList] = useState([]);
 
     useEffect(() => {
@@ -39,14 +41,22 @@ export default function Authors() {
         fetchData();
     }, []);
 
+    const handleAddAuthor = () => {
+        setShowModal(true);
+      };
+    
+      const handleCloseModal = () => {
+        setShowModal(false);
+      };
+
     return (
         <>
             <PageTitle title="Tác giả" />
-            <Link to="/app/author/addauthor"><Button
+            <Button
                 variant="primary"
-                onClick={() => console.log("Add")}>
+                onClick={handleAddAuthor}>
                 Thêm tác giả mới
-            </Button></Link>
+            </Button>
             <Grid container spacing={4} style={{ marginTop: "20px" }}>
                 <Grid item xs={12}>
                     <MUIDataTable
@@ -152,6 +162,8 @@ export default function Authors() {
                             rowsPerPageOptions: [5, 10, 20],
                         }}
                     />
+
+                    <AddAuthorModal show={showModal} handleClose={handleCloseModal}/>
                     <Modal show= {show} onHide ={handleClose} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Xác nhận xóa</Modal.Title>

@@ -16,28 +16,10 @@ import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import { Form } from "react-bootstrap";
 import axios from "axios";
-
-const datatableData = [
-    ["Joe James", "Example Inc.", "Yonkers", 100, 240, "2023-03-21 16:00:01.675556", "2023-03-21 16:00:01.675556"],
-    ["John Walsh", "Example Inc.", "Hartford", "CT"],
-    ["Bob Herm", "Example Inc.", "Tampa", "FL"],
-    ["James Houston", "Example Inc.", "Dallas", "TX"],
-    ["Prabhakar Linwood", "Example Inc.", "Hartford", "CT"],
-    ["Kaui Ignace", "Example Inc.", "Yonkers", "NY"],
-    ["Esperanza Susanne", "Example Inc.", "Hartford", "CT"],
-    ["Christian Birgitte", "Example Inc.", "Tampa", "FL"],
-    ["Meral Elias", "Example Inc.", "Hartford", "CT"],
-    ["Deep Pau", "Example Inc.", "Yonkers", "NY"],
-    ["Sebastiana Hani", "Example Inc.", "Dallas", "TX"],
-    ["Marciano Oihana", "Example Inc.", "Yonkers", "NY"],
-    ["Brigid Ankur", "Example Inc.", "Dallas", "TX"],
-    ["Anna Siranush", "Example Inc.", "Yonkers", "NY"],
-    ["Avram Sylva", "Example Inc.", "Hartford", "CT"],
-    ["Serafima Babatunde", "Example Inc.", "Tampa", "FL"],
-    ["Gaston Festus", "Example Inc.", "Tampa", "FL"],
-];
-
-console.log(datatableData);
+import AddCategoryModal from "./Add_category";
+import EditCategoryModal from "./Update_category";
+import DeleteCategoryModal from "./Delete_category";
+import { BASE_URL } from "../../config";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -48,19 +30,17 @@ const useStyles = makeStyles(theme => ({
 export default function Categories() {
     const classes = useStyles();
     const [show, setShow] = useState(false);
-    const [add, setAdd] = useState(false);
     const [update, setUpdate] = useState(false);
+    const [del, setDel] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const showAdd = () => setAdd(true);
-    const closeAdd = () => setAdd(false);
-    const showUpdate = () => setUpdate(true);
-    const closeUpdate = () => setUpdate(false);
     const [categoryList, setCategoryList] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            const categories = await axios.get("http://127.0.0.1:8000/api/category/categories/");
+            const categories = await axios.get(BASE_URL + "/api/category/categories/");
             console.log(categories);
             setCategoryList(categories.data);
         };
@@ -68,12 +48,52 @@ export default function Categories() {
     }, []);
     console.log("Thể loại", categoryList);
 
+    const handleAddCategory = () => {
+        setShowModal(true);
+      };
+    
+    const handleCloseModal = () => {
+        setShowModal(false);
+      };
+      const handleCloseUpdate = () => {
+        setUpdate(false);
+      };
+    
+    const handleEditCategory = (categoryId) => {
+        setSelectedCategoryId(categoryId);
+        setUpdate(true);
+      };
+
+      const handleCloseDelte = () =>{
+        setDel(false);
+      }
+  
+      const handleDeleteCategory = (categoryId) => {
+        setSelectedCategoryId(categoryId);
+        setDel(true);
+      }
+
+    console.log("id: ",selectedCategoryId);
+    const handleSaveProduct = () => {
+        // Tải lại danh sách sản phẩm sau khi thêm thành công
+        axios.get(BASE_URL + "/api/category/categories/")
+          .then(response => {
+            setCategoryList(response.data);
+            console.log(response.data);
+            handleCloseModal();
+            handleCloseUpdate();
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      };
+    
     return (
         <>
             <PageTitle title="Thể loại" />
             <Button
                 variant="primary"
-                onClick={showAdd}>
+                onClick={handleAddCategory}>
                 Thêm thể loại mới
             </Button>
             <Grid container spacing={4} style={{ marginTop: "20px" }}>
@@ -122,25 +142,16 @@ export default function Categories() {
                                         customBodyRender: (value, tableMeta, updateValue) => {
                                             return (
                                                 <div className={classes.buttonsContainer}>
-                                                    {/* <Link to="/app/author/detailauthor">
-                                                    <Button
-                                                        variant="success"
-                                                        onClick={() => console.log("Detail")}
-                                                    >
-                                                        Chi tiết
-                                                    </Button></Link> */}
-                                                    {" "}
-
                                                     <Button
                                                         variant="primary"
-                                                        onClick={showUpdate}
+                                                        onClick={() => handleEditCategory(tableMeta.rowData[0])}
                                                     >
                                                         Sửa
                                                     </Button>
                                                     {" "}
                                                     <Button
                                                         variant="danger"
-                                                        onClick={handleShow}
+                                                        onClick={() => handleDeleteCategory(tableMeta.rowData[0])}
                                                     >Xóa</Button>
                                                 </div>
                                             );
@@ -160,7 +171,10 @@ export default function Categories() {
                             rowsPerPageOptions: [5, 10, 20],
                         }}
                     />
-                    <Modal show= {show} onHide ={handleClose} centered>
+
+                    <EditCategoryModal show={update} handleClose={handleCloseUpdate} handleSave={handleSaveProduct} categoryID={selectedCategoryId} />
+                    <DeleteCategoryModal show={del} handleClose={handleCloseDelte} handleSave={handleSaveProduct} categoryId={selectedCategoryId}/>
+                    {/* <Modal show= {show} onHide ={handleClose} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Xác nhận xóa</Modal.Title>
                         </Modal.Header>
@@ -176,9 +190,9 @@ export default function Categories() {
                                 Hủy
                             </Button>
                         </Modal.Footer>
-                    </Modal>
+                    </Modal> */}
 
-                    <Modal show= {add} onHide ={closeAdd} centered>
+                    {/* <Modal show= {add} onHide ={closeAdd} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Thêm thể loại mới</Modal.Title>
                         </Modal.Header>
@@ -199,9 +213,11 @@ export default function Categories() {
                                 Hủy
                             </Button>
                         </Modal.Footer>
-                    </Modal>
+                    </Modal> */}
 
-                    <Modal show= {update} onHide ={closeUpdate} centered>
+                    <AddCategoryModal show={showModal} handleClose={handleCloseModal} handleSave={handleSaveProduct} />
+
+                    {/* <Modal show= {update} onHide ={closeUpdate} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Sửa thể loại</Modal.Title>
                         </Modal.Header>
@@ -222,7 +238,7 @@ export default function Categories() {
                                 Hủy
                             </Button>
                         </Modal.Footer>
-                    </Modal>
+                    </Modal> */}
                 </Grid>
                 {/* <Grid item xs={12}>
                     <Widget title="Material-UI Table" upperTitle noBodyPadding bodyClass={classes.tableOverflow}>

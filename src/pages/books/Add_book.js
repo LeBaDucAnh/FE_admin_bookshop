@@ -47,7 +47,7 @@ function AddBook() {
     formData.append('author', book.author);
     formData.append('publisher', book.publisher);
 
-    fetch(BASE_URL + '/api/book/book/', {
+    fetch(BASE_URL + '/api/book/books/', {
       method: 'POST',
       body: formData,
     })
@@ -64,7 +64,6 @@ function AddBook() {
           description: '',
           unit_price: '',
           status: 'IN STOCK',
-          qty: '',
           total_qty: '',
           image: null,
           category: null,
@@ -121,7 +120,7 @@ function AddBook() {
 
   return (
     <>
-    <PageTitle title="Thêm thể loại" />
+    <PageTitle title="Thêm sách mới" />
     <Form onSubmit={handleSubmit}>
     <Form.Group className="mb-3">
         <Form.Label>Tên sách</Form.Label>
@@ -173,14 +172,7 @@ function AddBook() {
       </Form.Group>
 
       <Form.Group as={Col} controlId="formGridAddress2">
-        <Form.Label>Số lượng tồn</Form.Label>
-        <Form.Control type='number' name="qty"
-          value={book.qty}
-          onChange={handleInputChange}/>
-      </Form.Group>
-
-      <Form.Group as={Col} controlId="formGridAddress2">
-        <Form.Label>Tổng số lượng</Form.Label>
+        <Form.Label>Số lượng nhập</Form.Label>
         <Form.Control type='number' name="total_qty"
           value={book.total_qty}
           onChange={handleInputChange}/>

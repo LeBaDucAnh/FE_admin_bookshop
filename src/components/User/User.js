@@ -2,36 +2,18 @@ import React from "react";
 import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import MUIDataTable from "mui-datatables";
-// import { Button } from "../../components/Wrappers/Wrappers";
+import AddUserModal from "./Add_user";
 // components
 import PageTitle from "../../components/PageTitle";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import { Form } from "react-bootstrap";
-
-const datatableData = [
-    ["Joe James", "Example Inc.", "Yonkers", 100, 240, "2023-03-21 16:00:01.675556", "2023-03-21 16:00:01.675556"],
-    ["John Walsh", "Example Inc.", "Hartford", "CT"],
-    ["Bob Herm", "Example Inc.", "Tampa", "FL"],
-    ["James Houston", "Example Inc.", "Dallas", "TX"],
-    ["Prabhakar Linwood", "Example Inc.", "Hartford", "CT"],
-    ["Kaui Ignace", "Example Inc.", "Yonkers", "NY"],
-    ["Esperanza Susanne", "Example Inc.", "Hartford", "CT"],
-    ["Christian Birgitte", "Example Inc.", "Tampa", "FL"],
-    ["Meral Elias", "Example Inc.", "Hartford", "CT"],
-    ["Deep Pau", "Example Inc.", "Yonkers", "NY"],
-    ["Sebastiana Hani", "Example Inc.", "Dallas", "TX"],
-    ["Marciano Oihana", "Example Inc.", "Yonkers", "NY"],
-    ["Brigid Ankur", "Example Inc.", "Dallas", "TX"],
-    ["Anna Siranush", "Example Inc.", "Yonkers", "NY"],
-    ["Avram Sylva", "Example Inc.", "Hartford", "CT"],
-    ["Serafima Babatunde", "Example Inc.", "Tampa", "FL"],
-    ["Gaston Festus", "Example Inc.", "Tampa", "FL"],
-];
-
-console.log(datatableData);
+import { BASE_URL } from "../../config";
+import axios from "axios";
+import EditCustomerModal from "./Update_user";
+import ModalConfirmDeleteUser from "./Delete_user";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -44,27 +26,117 @@ export default function Users() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const [add, setAdd] = useState(false);
-    const showAdd = () => setAdd(true);
-    const closeAdd = () => setAdd(false);
+    const [delet, setDelet] = useState(false);
     const [update, setUpdate] = useState(false);
-    const showUpdate = () => setUpdate(true);
-    const closeUpdate = () => setUpdate(false);
+    const [showModal, setShowModal] = useState(false);
+    const [customers, setCustomers] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const customers = await axios.get(BASE_URL + "/customers/");
+            console.log(customers);
+            setCustomers(customers.data);
+        };
+        fetchData();
+    }, []);
+
+    const handleAddUser = () => {
+        setShowModal(true);
+      };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+      };
+    
+      const handleCloseUpdate = () => {
+        setUpdate(false);
+      };
+    
+    const handleEditUser = (userId) => {
+        setSelectedUserId(userId);
+        console.log(userId);
+        setUpdate(true);
+      };
+    
+    const handleCloseDelte = () =>{
+      setDelet(false);
+    }
+
+    const handleDeleteUser = (userId) => {
+      setSelectedUserId(userId);
+      setDelet(true);
+    }
+
+      const handleSaveProduct = () => {
+        // Tải lại danh sách sản phẩm sau khi thêm thành công
+        axios.get(BASE_URL + "/customers/")
+          .then(response => {
+            setCustomers(response.data);
+            console.log(response.data);
+            handleCloseModal();
+            // handleCloseUpdate();
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      };
+    
     return (
         <>
             <PageTitle title="Người dùng" />
             <Button
                 variant="primary"
-                onClick={showAdd}>
+                onClick={handleAddUser}>
                 Thêm người dùng mới
             </Button>
             <Grid container spacing={4} style={{ marginTop: "20px" }}>
                 <Grid item xs={12}>
                     <MUIDataTable
                         title="Danh sách người dùng"
-                        data={datatableData}
-                        columns={
-                            ["Tên người dùng", "Email", "Thời gian đăng nhập", "Quản trị viên",
+                        data={customers}
+                        columns={[
+                            {
+                                name: "id",
+                                label: "ID",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "fullname",
+                                label: "Tên khách hàng",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "email",
+                                label: "Email",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "created_at",
+                                label: "Thời gian tạo",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "updated_at",
+                                label: "Thời gian cập nhật",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
                                 {
                                     name: "",
                                     options: {
@@ -75,14 +147,14 @@ export default function Users() {
                                                 <div className={classes.buttonsContainer}>
                                                         <Button
                                                             variant="primary"
-                                                            onClick={showUpdate}
+                                                            onClick={() => handleEditUser(tableMeta.rowData[0])}
                                                         >
                                                             Sửa
                                                         </Button>
                                                     {" "}
                                                     <Button
                                                         variant="danger"
-                                                        onClick={handleShow}
+                                                        onClick={()=>handleDeleteUser(tableMeta.rowData[0])}
                                                     >Xóa</Button>
                                                 </div>
                                             );
@@ -94,9 +166,15 @@ export default function Users() {
                         }
                         options={{
                             filterType: "checkbox",
+                            selectableRows: "none",
+                            responsive: "standard",
+                            filter: true,
+                            search: true,
+                            pagination: true,
+                            rowsPerPageOptions: [5, 10, 20],
                         }}
                     />
-                    <Modal show={show} onHide={handleClose} centered>
+                    {/* <Modal show={show} onHide={handleClose} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Xác nhận xóa</Modal.Title>
                         </Modal.Header>
@@ -112,107 +190,12 @@ export default function Users() {
                                 Hủy
                             </Button>
                         </Modal.Footer>
-                    </Modal>
+                    </Modal> */}
 
-                    <Modal show={add} onHide={closeAdd} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Thêm người dùng mới</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Họ và tên</Form.Label>
-                                    <Form.Control />
-                                </Form.Group>
-                                <Form.Group controlId="formFile" className="mb-3">
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control type="file" />
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGridAddress1">
-                                    <Form.Label>Mật khẩu</Form.Label>
-                                    <Form.Control as="textarea" />
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGridAddress1">
-                                    <Form.Label>Quản trị viên</Form.Label>
-                                    <Form.Check
-                                        type="radio"
-                                        label="Người dùng"
-                                        name="formHorizontalRadios"
-                                        id="formHorizontalRadios1"
-                                        defaultChecked
-                                    />
-                                    <Form.Check
-                                        type="radio"
-                                        label="Quản trị viên"
-                                        name="formHorizontalRadios"
-                                        id="formHorizontalRadios2"
-                                    />
-                                </Form.Group>
-                            </Form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary" onClick={handleClose}>
-                                Lưu
-                            </Button>
-                            {" "}
-                            <Button variant="secondary" onClick={closeAdd}>
-                                Hủy
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-
-                    <Modal show={update} onHide={closeUpdate} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Sửa thông tin người dùng</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Họ và tên</Form.Label>
-                                    <Form.Control />
-                                </Form.Group>
-                                <Form.Group controlId="formFile" className="mb-3">
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control type="file" />
-                                </Form.Group>
-                                {/* <Form.Group className="mb-3" controlId="formGridAddress1">
-                                    <Form.Label>Mật khẩu</Form.Label>
-                                    <Form.Control as="textarea" />
-                                </Form.Group> */}
-                                <Form.Group className="mb-3" controlId="formGridAddress1">
-                                    <Form.Label>Quản trị viên</Form.Label>
-                                    <Form.Check
-                                        type="radio"
-                                        label="Người dùng"
-                                        name="formHorizontalRadios"
-                                        id="formHorizontalRadios1"
-                                        defaultChecked
-                                    />
-                                    <Form.Check
-                                        type="radio"
-                                        label="Quản trị viên"
-                                        name="formHorizontalRadios"
-                                        id="formHorizontalRadios2"
-                                    />
-                                </Form.Group>
-                            </Form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary" onClick={handleClose}>
-                                Lưu
-                            </Button>
-                            {" "}
-                            <Button variant="secondary" onClick={closeUpdate}>
-                                Hủy
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
+                    <AddUserModal show={showModal} handleClose={handleCloseModal} handleSave={handleSaveProduct} />      
+                    <EditCustomerModal show={update} handleClose={handleCloseUpdate} handleSave={handleSaveProduct} customerID={selectedUserId} />
+                    <ModalConfirmDeleteUser show={delet} handleClose={handleCloseDelte} handleSave={handleSaveProduct} customerId = {selectedUserId}/>
                 </Grid>
-                {/* <Grid item xs={12}>
-                    <Widget title="Material-UI Table" upperTitle noBodyPadding bodyClass={classes.tableOverflow}>
-                        <Table data={mock.table} />
-                    </Widget>
-                </Grid> */}
             </Grid>
         </>
     );

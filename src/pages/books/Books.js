@@ -13,10 +13,10 @@ import mock from "../dashboard/mock";
 import { Link } from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-import { deleteBookById } from "../../utils/book";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import { useHistory } from "react-router-dom";
+import ModalConfirmDeleteBook from './Delete_book';
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -24,23 +24,18 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default function Books(props) {
+export default function Books() {
     const classes = useStyles();
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = (bookID) => {
-        setBookToDelete(bookID);
-        setShow(true);
-    }
     const [bookList, setBookList] = useState([]);
     const history = useHistory();
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [bookToDelete, setBookToDelete] = useState(null);
 
-    // const handleDeleteClick = (book) => {
-    //     setBookToDelete(book);
-    //     setOpenDeleteModal(true);
-    // };
+    const handleClose = () => {setShow(false)};
+    const handleDelete = (bookID) => {
+        setBookToDelete(bookID);
+        setShow(true);
+    };
 
     const handleViewDetail = (rowData) => {
         const id = rowData[0];
@@ -48,48 +43,16 @@ export default function Books(props) {
         history.push(`/app/book/detailbook/${id}`);
     };
 
-    const handleViewUpdate = (rowData) => {
-        const id = rowData[0];
+    const handleViewUpdate = (id) => {
         console.log(id);
         history.push(`/app/book/updatebook/${id}`);
     };
-    
-    const handleDelete = () => {
-        axios.delete(`${BASE_URL}/api/book/book/${bookToDelete}/`)
-          .then(() => {
-            //close modal
-            console.log("Xóa thành công");
-            setShow(false);
-            history.push(`/app/books`);
-            //reload table data
-            // reloadTableData();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-      
-
-    // const handleDeleteConfirm = () => {
-    //     setIsDeleting(true);
-    //     axios.delete(`${BASE_URL}/api/book/book/${selectedBook[0]}/`)
-    //         .then(response => {
-    //             // Xóa thành công, cập nhật danh sách các sách
-    //             props.fetchBooks();
-    //             setIsDeleting(false);
-    //             setSelectedBook(null);
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //             setIsDeleting(false);
-    //         });
-    // };
 
 
     // Sử dụng useEffect hook để lấy danh sách 
     useEffect(() => {
         const fetchData = async () => {
-            const books = await axios.get( BASE_URL + "/api/book/books/");
+            const books = await axios.get(BASE_URL + "/api/book/books/");
             setBookList(books.data);
         };
         fetchData();
@@ -198,18 +161,15 @@ export default function Books(props) {
                                                 {/* <Link to="/app/book/updatebook"> */}
                                                 <Button
                                                     variant="primary"
-                                                    onClick={() => { handleViewUpdate(tableMeta.rowData) }}
+                                                    onClick={() => { handleViewUpdate(tableMeta.rowData[0]) }}
                                                 >
                                                     Sửa
                                                 </Button>
                                                 {" "}
                                                 <Button
-                                                        variant="danger"
-                                                        onClick={handleShow(tableMeta.rowData[0])}
-                                                    >Xóa</Button>
-                                                {/* <Button variant="danger" onClick={() => handleDeleteClick(tableMeta.rowData)}>
-                                                    Xóa
-                                                </Button> */}
+                                                    variant="danger"
+                                                    onClick={() => {handleDelete(tableMeta.rowData[0])}}
+                                                >Xóa</Button>
                                             </div>
                                         );
                                     }
@@ -225,33 +185,16 @@ export default function Books(props) {
                             pagination: true,
                             rowsPerPageOptions: [5, 10, 20],
                         }}
-                        
+
                     />
-                    <Modal show={show} onHide={handleClose} centered>
-                    {/* <Modal open={selectedBook !== null} onClose={() => setSelectedBook(null)}> */}
-                        <Modal.Header closeButton>
-                            <Modal.Title>Xác nhận xóa</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            Bạn chắc chắn xóa trường dữ liệu này?
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary"onClick={handleDelete}>
-                                Đồng ý
-                            </Button>
-                            {" "}
-                            <Button variant="secondary" onClick={handleClose}>
-                                Hủy
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-                </Grid>
-                {/* <Grid item xs={12}>
-                    <Widget title="Material-UI Table" upperTitle noBodyPadding bodyClass={classes.tableOverflow}>
-                        <Table data={mock.table} />
-                    </Widget>
-                </Grid> */}
+
+                    <ModalConfirmDeleteBook
+                        show={show}
+                        handleClose={handleClose}
+                        bookID = {bookToDelete}
+                    />
             </Grid>
+        </Grid >
         </>
     );
 }

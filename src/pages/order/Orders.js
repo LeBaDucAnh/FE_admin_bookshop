@@ -1,50 +1,16 @@
-import React from "react";
+import React, {useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import MUIDataTable from "mui-datatables";
 // import { Button } from "../../components/Wrappers/Wrappers";
 // components
 import PageTitle from "../../components/PageTitle/PageTitle";
-import Widget from "../../components/Widget/Widget";
-import Table from "../dashboard/components/Table/Table";
-import classnames from "classnames";
-// data
-import mock from "../dashboard/mock";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-
-
-const datatableData = [
-    ["121231", "Yonkers","012313112", 100, "2023-03-21 16:00:01.675556", "2023-03-21 16:00:01.675556", "Pending"],
-    ["121231", "Yonkers","012313112", 100, "2023-03-21 16:00:01.675556", "2023-03-21 16:00:01.675556", "Completed"],
-    ["121231", "Yonkers","012313112", 100, "2023-03-21 16:00:01.675556", "2023-03-21 16:00:01.675556", "Cancelled"],
-    ["John Walsh", "Example Inc.", "Hartford", "CT"],
-    ["Bob Herm", "Example Inc.", "Tampa", "FL"],
-    ["James Houston", "Example Inc.", "Dallas", "TX"],
-    ["Prabhakar Linwood", "Example Inc.", "Hartford", "CT"],
-    ["Kaui Ignace", "Example Inc.", "Yonkers", "NY"],
-    ["Esperanza Susanne", "Example Inc.", "Hartford", "CT"],
-    ["Christian Birgitte", "Example Inc.", "Tampa", "FL"],
-    ["Meral Elias", "Example Inc.", "Hartford", "CT"],
-    ["Deep Pau", "Example Inc.", "Yonkers", "NY"],
-    ["Sebastiana Hani", "Example Inc.", "Dallas", "TX"],
-    ["Marciano Oihana", "Example Inc.", "Yonkers", "NY"],
-    ["Brigid Ankur", "Example Inc.", "Dallas", "TX"],
-    ["Anna Siranush", "Example Inc.", "Yonkers", "NY"],
-    ["Avram Sylva", "Example Inc.", "Hartford", "CT"],
-    ["Serafima Babatunde", "Example Inc.", "Tampa", "FL"],
-    ["Gaston Festus", "Example Inc.", "Tampa", "FL"],
-];
-
-const states = {
-    completed: "success",
-    pending: "warning",
-    cancelled: "secondary",
-  };
-
-console.log(datatableData);
+import { BASE_URL } from "../../config";
+import axios from "axios";
+import EditTransactionModal from "./Update_order";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -52,12 +18,57 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
+const states = {
+    completed: "success",
+    pending: "warning",
+    cancelled: "danger",
+};
+
 export default function Order() {
     const classes = useStyles();
     const [show, setShow] = useState(false);
+    const [update, setUpdate] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [transactionList, setTransactionList] = useState([]);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            const transactions = await axios.get(BASE_URL + "/api/transaction/transactions/");
+            console.log(transactions);
+            setTransactionList(transactions.data);
+        };
+        fetchData();
+    }, []);
+    
+    console.log(transactionList);
 
+    const handleCloseUpdate = () => {
+        setUpdate(false);
+      };
+    
+    const handleEditOrder = (transactionId) => {
+        setSelectedOrderId(transactionId);
+        console.log(transactionId);
+        setUpdate(true);
+      };
+    
+      console.log("id: ",selectedOrderId);
+
+      const handleSaveProduct = () => {
+        // Tải lại danh sách sản phẩm sau khi thêm thành công
+        axios.get(BASE_URL + "/api/transaction/transactions/")
+          .then(response => {
+            setTransactionList(response.data);
+            console.log(response.data);
+            handleCloseUpdate();
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      };
+    
     return (
         <>
             <PageTitle title="Quản lý đơn hàng" />
@@ -66,31 +77,85 @@ export default function Order() {
                 <Grid item xs={12}>
                     <MUIDataTable
                         title="Danh sách đơn hàng"
-                        data={datatableData}
+                        data={transactionList}
                         columns={
-                            ["Mã đơn hàng", "Họ tên", "Số điện thoại", "Tổng tiền", "Thời gian tạo", "Thời gian cập nhật",
+                            [
                             {
-                                name: "Trạng thái",
+                                name: "id",
+                                label: "Mã đơn hàng",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "fullname",
+                                label: "Họ tên",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "phone",
+                                label: "Số điện thoại",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "amount",
+                                label: "Tổng tiền",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "created_at",
+                                label: "Thời gian tạo",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                              {
+                                name: "updated_at",
+                                label: "Thời gian cập nhật",
+                                options: {
+                                  filter: false,
+                                  sort: true,
+                                },
+                              },
+                            {
+                                name: "status",
+                                label: "Trạng thái",
                                 options:{
-                                    customBodyRender: (value)=>{
+                                    customBodyRender: (status)=>{
                                         let color;
-                                        switch(value){
-                                            case 'Pending':
+                                        let text;
+                                        switch(status){
+                                            case 'PENDING':
+                                                text = "Chờ xác nhận"
                                                 color = 'orange';
                                                 break;
                                             case 'Completed':
+                                                text = "Thành công"
                                                 color = 'green';
                                                 break;
                                             case 'Cancelled':
+                                                text = "Đã hủy"
                                                 color = 'red';
                                                 break;
                                             default:
+                                                text = "Đang giao"
                                                 color = 'transparent';
                                                 break;
                                         }
                                         return(
-                                            <div style={{backgroundColor: color, borderRadius: "15px", padding: "5px", textAlign: "center", color: "white"}}>
-                                                {value}
+                                            <div style={{backgroundColor: color, borderRadius: "15px", padding: "5px", textAlign: "center", color: "black"}}>
+                                                {text}
                                             </div>
                                         );
                                     }
@@ -112,13 +177,12 @@ export default function Order() {
                                                         Chi tiết
                                                     </Button></Link>
                                                     {" "}
-                                                    <Link to="/app/book/updatebook">
                                                     <Button
                                                         variant="primary"
-                                                        onClick={() => console.log("Update")}
+                                                        onClick={() => handleEditOrder(tableMeta.rowData[0])}
                                                     >
                                                         Sửa
-                                                    </Button></Link>
+                                                    </Button>
                                                     {" "}
                                                     <Button
                                                         variant="danger"
@@ -134,8 +198,17 @@ export default function Order() {
                         }
                         options={{
                             filterType: "checkbox",
+                            selectableRows: "none",
+                            responsive: "standard",
+                            filter: true,
+                            search: true,
+                            pagination: true,
+                            rowsPerPageOptions: [5, 10, 20],
                         }}
                     />
+
+                    <EditTransactionModal show={update} handleClose={handleCloseUpdate} handleSave={handleSaveProduct} transactionID={selectedOrderId} />
+
                     <Modal show= {show} onHide ={handleClose} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Xác nhận xóa</Modal.Title>
