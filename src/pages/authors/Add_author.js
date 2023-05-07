@@ -23,7 +23,7 @@ const AddAuthorModal = (props) => {
       description: description,
     };
 
-    axios.post(BASE_URL+'/api/author/author/', data, {
+    axios.post(BASE_URL+'/api/author/authors/', data, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

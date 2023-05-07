@@ -9,7 +9,7 @@ const EditTransactionModal = (props) => {
   const [phone, setPhone] = useState('');
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/transaction/transactions/${props.transactionID}/`)
+    axios.get(`${BASE_URL}/api/transaction/transaction/${props.transactionID}/`)
       .then(response => {
         setAddress(response.data.address);
         setPhone(response.data.phone);
@@ -27,7 +27,7 @@ const EditTransactionModal = (props) => {
       status: status,
       phone: phone,
     };
-    axios.put(`${BASE_URL}/api/transaction/transactions/${props.transactionID}/`, data)
+    axios.put(`${BASE_URL}/api/transaction/transaction/${props.transactionID}/`, data)
       .then(response => {
         props.handleClose();
         window.location.reload();

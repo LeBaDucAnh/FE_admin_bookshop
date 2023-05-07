@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   LinearProgress,
@@ -20,11 +20,16 @@ import {
   Cell,
   YAxis,
   XAxis,
+  Legend,
+  Bar,
+  BarChart,
+  Tooltip,
 } from "recharts";
+
 
 // styles
 import useStyles from "./styles";
-
+import axios from 'axios';
 // components
 import mock from "./mock";
 import Widget from "../../components/Widget";
@@ -33,14 +38,9 @@ import { Typography } from "../../components/Wrappers";
 import Dot from "../../components/Sidebar/components/Dot";
 import Table from "./components/Table/Table";
 import BigStat from "./components/BigStat/BigStat";
-
+import { BASE_URL } from "../../config";
 const mainChartData = getMainChartData();
-const PieChartData = [
-  { name: "Group A", value: 400, color: "primary" },
-  { name: "Group B", value: 300, color: "secondary" },
-  { name: "Group C", value: 300, color: "warning" },
-  { name: "Group D", value: 200, color: "success" },
-];
+
 
 export default function Dashboard(props) {
   var classes = useStyles();
@@ -48,10 +48,59 @@ export default function Dashboard(props) {
 
   // local
   var [mainChartState, setMainChartState] = useState("monthly");
+  const [orderData, setOrderData] = useState(null);
+  const [dailyRevenueData, setDailyRevenueData] = useState([]);
+  const [productStatsData, setProductStatsData] = useState([]);
 
+  useEffect(() => {
+    axios.get(BASE_URL +'/api/book/product-stats/').then(res => {
+      setProductStatsData(res.data);
+    })
+    .catch(error => {
+      console.error('Error fetching order statistics', error);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/api/transaction/daily-revenue/').then(res => {
+      setDailyRevenueData(res.data);
+    })
+    .catch(error => {
+      console.error('Error fetching order statistics', error);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/api/transaction/order_statistics/')
+      .then(response => {
+        setOrderData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching order statistics', error);
+      });
+  }, []);
+
+  console.log('url', BASE_URL + '/api/transaction/order_statistics/');
+  console.log('áddd', orderData);
+
+  if (!orderData) {
+    return (
+      <div>Loading...</div>
+
+    )
+  }
+  //window.location.reload();
+  const COLORS = ['#4BC0C0', '#36A2EB', '#FFCE56', '#FF6384'];
+
+  const data = [
+    { name: 'Chờ xác nhận', value: orderData.values[0] },
+    { name: 'Đang giao', value: orderData.values[1] },
+    { name: 'Đã giao', value: orderData.values[2] },
+    { name: 'Đã hủy', value: orderData.values[3] },
+  ];
   return (
     <>
-      <PageTitle title="Dashboard"/>
+      <PageTitle title="Dashboard" />
       <Grid container spacing={4}>
         <Grid item lg={3} md={4} sm={6} xs={12}>
           {/* <Widget
@@ -260,32 +309,33 @@ export default function Dashboard(props) {
               </div>
             </div>
           </Widget> */}
+
         </Grid>
-        <Grid item lg={3} md={4} sm={6} xs={12}>
-          {/* <Widget title="Revenue Breakdown" upperTitle className={classes.card}>
+        {/* <Grid item lg={3} md={4} sm={6} xs={12}>
+          <Widget title="Revenue Breakdown" upperTitle className={classes.card}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <ResponsiveContainer width="100%" height={144}>
-                  <PieChart>
-                    <Pie
-                      data={PieChartData}
-                      innerRadius={30}
-                      outerRadius={40}
-                      dataKey="value"
-                    >
-                      {PieChartData.map((entry, index) => (
+                  <PieChart> */}
+        {/* <Pie
+                      data={chartData}
+                      // innerRadius={30}
+                      // outerRadius={40}
+                      // dataKey="value"
+                    /> */}
+        {/* {chartData.map((entry, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={theme.palette[entry.color].main}
                         />
-                      ))}
-                    </Pie>
-                  </PieChart>
+                      ))} */}
+
+        {/* </PieChart>
                 </ResponsiveContainer>
-              </Grid>
-              <Grid item xs={6}>
+              </Grid> */}
+        {/* <Grid item xs={6}>
                 <div className={classes.pieChartLegendWrapper}>
-                  {PieChartData.map(({ name, value, color }, index) => (
+                  {chartData.map(({ name, value, color }, index) => (
                     <div key={color} className={classes.legendItemContainer}>
                       <Dot color={color} />
                       <Typography style={{ whiteSpace: "nowrap", fontSize: 12 }} >
@@ -297,10 +347,10 @@ export default function Dashboard(props) {
                     </div>
                   ))}
                 </div>
-              </Grid>
-            </Grid>
-          </Widget> */}
-        </Grid>
+              </Grid> */}
+        {/* </Grid>
+          </Widget>
+        </Grid> */}
         <Grid item xs={12}>
           <Widget
             bodyClass={classes.mainChartBody}
@@ -311,9 +361,9 @@ export default function Dashboard(props) {
                   color="text"
                   colorBrightness="secondary"
                 >
-                  Daily Line Chart
+                  Thống kê số lượng sách
                 </Typography>
-                <div className={classes.mainChartHeaderLabels}>
+                {/* <div className={classes.mainChartHeaderLabels}>
                   <div className={classes.mainChartHeaderLabel}>
                     <Dot color="warning" />
                     <Typography className={classes.mainChartLegentElement}>
@@ -332,73 +382,18 @@ export default function Dashboard(props) {
                       Desktop
                     </Typography>
                   </div>
-                </div>
-                <Select
-                  value={mainChartState}
-                  onChange={e => setMainChartState(e.target.value)}
-                  input={
-                    <OutlinedInput
-                      labelWidth={0}
-                      classes={{
-                        notchedOutline: classes.mainChartSelectRoot,
-                        input: classes.mainChartSelect,
-                      }}
-                    />
-                  }
-                  autoWidth
-                >
-                  <MenuItem value="daily">Daily</MenuItem>
-                  <MenuItem value="weekly">Weekly</MenuItem>
-                  <MenuItem value="monthly">Monthly</MenuItem>
-                </Select>
+                </div> */}
               </div>
             }
           >
-            <ResponsiveContainer width="100%" minWidth={500} height={350}>
-              <ComposedChart
-                margin={{ top: 0, right: -15, left: -15, bottom: 0 }}
-                data={mainChartData}
-              >
-                <YAxis
-                  ticks={[0, 2500, 5000, 7500]}
-                  tick={{ fill: theme.palette.text.hint + "80", fontSize: 14 }}
-                  stroke={theme.palette.text.hint + "80"}
-                  tickLine={false}
-                />
-                <XAxis
-                  tickFormatter={i => i + 1}
-                  tick={{ fill: theme.palette.text.hint + "80", fontSize: 14 }}
-                  stroke={theme.palette.text.hint + "80"}
-                  tickLine={false}
-                />
-                <Area
-                  type="natural"
-                  dataKey="desktop"
-                  fill={theme.palette.background.light}
-                  strokeWidth={0}
-                  activeDot={false}
-                />
-                <Line
-                  type="natural"
-                  dataKey="mobile"
-                  stroke={theme.palette.primary.main}
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={false}
-                />
-                <Line
-                  type="linear"
-                  dataKey="tablet"
-                  stroke={theme.palette.warning.main}
-                  strokeWidth={2}
-                  dot={{
-                    stroke: theme.palette.warning.dark,
-                    strokeWidth: 2,
-                    fill: theme.palette.warning.main,
-                  }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
+              <BarChart width={1700} height={500} data={productStatsData}>
+                <XAxis dataKey="name" label={{ value: 'Sách', position: 'insideBottomRight' }}/>
+                <YAxis label={{ value: 'Số lượng', angle: -90, position: 'insideLeft' }}/>
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="inventory" fill="#8884d8" name="Hàng tồn" />
+                <Bar dataKey="sales" fill="#82ca9d" name="Hàng bán được" />
+              </BarChart>
           </Widget>
         </Grid>
         {/* {mock.bigStat.map(stat => (
@@ -406,17 +401,71 @@ export default function Dashboard(props) {
             <BigStat {...stat} />
           </Grid>
         ))} */}
-        <Grid item xs={12}>
-          <Widget
-            title="Đơn hàng gần đây"
-            upperTitle
-            noBodyPadding
-            bodyClass={classes.tableWidget}
-          >
-            <Table data={mock.table} />
-          </Widget>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Widget
+              title="Thống kê đơn hàng"
+              upperTitle
+              noBodyPadding
+              bodyClass={classes.tableWidget}
+            >
+              <PieChart width={400} height={300}>
+                <Pie
+                  data={data}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  label
+                >
+                  {
+                    data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))
+                  }
+                </Pie>
+                <Legend />
+              </PieChart>
+            </Widget>
+          </Grid>
+          <Grid item xs={8}>
+            <Widget
+              title="Doanh thu mỗi ngày"
+              upperTitle
+              noBodyPadding
+              bodyClass={classes.tableWidget}
+            >
+              <BarChart width={600} height={400} data={dailyRevenueData}>
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="revenue" fill="#8884d8" name="Doanh thu" />
+              </BarChart>
+            </Widget>
+          </Grid>
+          {/* <Grid item xs={8}>
+            <Widget
+              title="Thống kê sách tồn"
+              upperTitle
+              noBodyPadding
+              bodyClass={classes.tableWidget}
+            >
+              <BarChart width={600} height={400} data={productStatsData}>
+                <XAxis dataKey="name" label={{ value: 'Sách', position: 'insideBottomLeft' }}/>
+                <YAxis label={{ value: 'Số lượng', angle: -90, position: 'insideLeft' }}/>
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="inventory" fill="#8884d8" name="Hàng tồn" />
+                <Bar dataKey="sales" fill="#82ca9d" name="Hàng bán được" />
+              </BarChart>
+            </Widget>
+          </Grid> */}
         </Grid>
       </Grid>
+
     </>
   );
 }

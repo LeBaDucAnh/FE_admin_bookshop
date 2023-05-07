@@ -7,39 +7,45 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
 
-function UpdateBook({props}) {
+function UpdateBook({match}) {
+  const { id } = match.params;
   const [book, setBook] = useState({});
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
-  const [loading, setLoading] = useState(true);
   const history = useHistory();
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/book/books/${props.bookID}/`)
+    axios.get(`${BASE_URL}/api/book/books/${id}/`)
       .then(res => {
-        console.log(props.bookID);
         setBook(res.data);
-        setLoading(false);
       })
       .catch(err => console.log(err));
       
   }, []);
 console.log(book);
-  useEffect(() => {
-    axios.get(BASE_URL + '/api/category/categories/')
-      .then(res => {
-        setCategories(res.data);
-      })
-      .catch(err => console.log(err));
-    
-    axios.get(BASE_URL + '/api/author/authors/')
-      .then(res => {
-        setAuthors(res.data);
-      })
-      .catch(err => console.log(err));
+useEffect(() => {
+  fetch(BASE_URL + '/api/category/categories/')
+    .then((response) => response.json())
+    .then((data) => {
+      setCategories(data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+  fetch(BASE_URL + '/api/author/authors/')
+    .then((response) => response.json())
+    .then((data) => {
+      setAuthors(data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   }, []);
+
   console.log(categories);
   console.log(authors);
+
   const categoryOptions = categories.map((category) => (
     <option key={category.id} value={category.id}>
       {category.category_name}
@@ -58,25 +64,39 @@ console.log(book);
     setBook({ ...book, [name]: value });
   };
 
-  // const handleChange = e => {
-  //   setBook({
-  //     ...book,
-  //     [e.target.name]: e.target.value
-  //   });
-  // };
+  const handleCategoryChange = (event) => {
+    const categoryId = event.target.value;
+    const category = categories.find((c) => c.id === parseInt(categoryId));
+    setBook({ ...book, category });
+  };
+
+  const handleAuthorChange = (event) => {
+    const authorId = event.target.value;
+    const author = authors.find((a) => a.id === parseInt(authorId));
+    setBook({ ...book, author });
+  };
+
+  const handleImageChange = (event) => {
+    setBook({ ...book, image: event.target.files[0] });
+  };
+
+  const handleTotalQtyChange = (event) => {
+    setBook({ ...book, total_qty: event.target.value })
+  }
 
   const handleSubmit = e => {
     e.preventDefault();
-    axios.put(BASE_URL + "/api/book/book/"+ props.id + '/', book)
+    axios.put(BASE_URL + "/api/book/book/"+ id + '/', book,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
       .then(res => {
         history.push('/books/');
       })
       .catch(err => console.log(err));
   };
 
-  // if (loading) {
-  //   return <p>Loading...</p>;
-  // }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -100,12 +120,12 @@ console.log(book);
         </Form.Group>
         <Form.Group as={Col} controlId="formGridAddress2">
         <Form.Label>Nhà xuất bản</Form.Label>
-        <Form.Control/>
+        <Form.Control type="text" name="publisher" value={book.publisher} onChange={handleChange}/>
       </Form.Group>
       </Row>
       <Form.Group controlId="formFile" className="mb-3">
         <Form.Label>Chọn file ảnh</Form.Label>
-        <Form.Control type="file" name="image" value={book.image} onChange={handleChange}/>
+        <Form.Control type="file" name="image" onChange={handleImageChange}/>
       </Form.Group>
       <Form.Group className="mb-3" controlId="formGridAddress1">
         <Form.Label>Mô tả</Form.Label>
@@ -118,8 +138,8 @@ console.log(book);
       </Form.Group>
 
       <Form.Group as={Col} controlId="formGridAddress2">
-        <Form.Label>Số lượng tồn</Form.Label>
-        <Form.Control type='number' name="qty" value={book.qty} onChange={handleChange}/>
+        <Form.Label>Số lượng nhập thêm</Form.Label>
+        <Form.Control type='number' name="total_qty" defaultValue="0" onChange={handleTotalQtyChange}/>
       </Form.Group>
 
       <Form.Group as={Col} controlId="formGridAddress2">
@@ -131,21 +151,21 @@ console.log(book);
       <Row className="mb-3">
         <Form.Group as={Col} controlId="formGridCity">
           <Form.Label>Thể loại</Form.Label>
-          <Form.Select name="category" value={book.category ? book.category.id : ''} onChange={handleChange}>
-            <option>Choose...</option>
-            {/* {categories.map(category => (
-            <option key={category.id} value={category.id}>{category.category_name}</option>
-          ))} */}
+          <Form.Select name="category"
+          value={book.category ? book.category.id : ''}
+          onChange={handleCategoryChange}>
+            <option value="">Chọn thể loại</option>
+            {categoryOptions}
           </Form.Select>
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridState">
           <Form.Label>Tác giả</Form.Label>
-          <Form.Select name="author" value={book.author ? book.author.id : ''} onChange={handleChange}>
-            <option>Choose...</option>
-            {/* {authors.map(author => (
-            <option key={author.id} value={author.id}>{author.author_name}</option>
-          ))} */}
+          <Form.Select name="author"
+          value={book.author ? book.author.id : ''}
+          onChange={handleAuthorChange}>
+            <option value="">Chọn tác giả</option>
+            {authorOptions}
           </Form.Select>
         </Form.Group>
 
@@ -157,8 +177,8 @@ console.log(book);
         <Form.Group as={Col} controlId="formGridZip">
           <Form.Label>Trạng thái</Form.Label>
           <Form.Select name="status" value={book.status} onChange={handleChange}>
-            <option value="IN STOCK">Available</option>
-            <option value="OUT OF STOCK">Out of stock</option>
+            <option value="IN STOCK">Còn hàng</option>
+            <option value="OUT OF STOCK">Hết hàng</option>
           </Form.Select>
         </Form.Group>
 

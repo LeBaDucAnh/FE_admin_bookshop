@@ -3,9 +3,9 @@ import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
 
-const DeleteCategoryModal = (props) => {
-  const handleDeleteProduct = () => {
-    axios.delete(`${BASE_URL}/api/category/categories/${props.categoryId}/`)
+const DeleteReviewModal = (props) => {
+  const handleReview = () => {
+    axios.delete(`${BASE_URL}/api/review/reviews/${props.reviewId}/`)
       .then(response => {
         console.log(response);
         props.handleClose();
@@ -19,16 +19,16 @@ const DeleteCategoryModal = (props) => {
   return (
     <Modal show={props.show} onHide={props.handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Xóa thể loại</Modal.Title>
+        <Modal.Title>Xóa bình luận</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        Bạn có chắc muốn xóa thể loại này?
+        Bạn có chắc muốn xóa bình luận này?
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={props.handleClose}>
           Hủy
         </Button>
-        <Button variant="danger" onClick={handleDeleteProduct}>
+        <Button variant="danger" onClick={handleReview}>
           Xóa
         </Button>
       </Modal.Footer>
@@ -36,4 +36,4 @@ const DeleteCategoryModal = (props) => {
   );
 };
 
-export default DeleteCategoryModal;
+export default DeleteReviewModal;

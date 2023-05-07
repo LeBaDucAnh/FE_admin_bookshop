@@ -43,7 +43,8 @@ export default function Books() {
         history.push(`/app/book/detailbook/${id}`);
     };
 
-    const handleViewUpdate = (id) => {
+    const handleViewUpdate = (rowData) => {
+        const id = rowData[0];
         console.log(id);
         history.push(`/app/book/updatebook/${id}`);
     };
@@ -161,7 +162,7 @@ export default function Books() {
                                                 {/* <Link to="/app/book/updatebook"> */}
                                                 <Button
                                                     variant="primary"
-                                                    onClick={() => { handleViewUpdate(tableMeta.rowData[0]) }}
+                                                    onClick={() => { handleViewUpdate(tableMeta.rowData) }}
                                                 >
                                                     Sửa
                                                 </Button>

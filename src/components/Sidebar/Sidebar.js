@@ -15,6 +15,7 @@ import {
   ShoppingCart as CartIcon,
   Person as UserIcon,
   Comment as CommentIcon,
+  FontDownloadRounded as Download,
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
 import { withRouter } from "react-router-dom";
@@ -45,7 +46,7 @@ const structure = [
   // { id: 2, label: "Tables", link: "/app/tables", icon: <TableIcon /> },
   {
     id: 3,
-    label: "Quản lý thư mục",
+    label: "Quản lý thể loại",
     link: "/app/category",
     icon: <UIElementsIcon />,
   },
@@ -54,37 +55,12 @@ const structure = [
     label: "Quản lý tác giả",
     link: "/app/authors",
     icon: <PeopleIcon/>,
-    // children: [
-    //   { label: "Icons", link: "/app/ui/icons" },
-    //   { label: "Charts", link: "/app/ui/charts" },
-    //   { label: "Maps", link: "/app/ui/maps" },
-    // ],
   },
   { id: 5, label:"Quản lý đơn hàng", link: "/app/order", icon: <CartIcon /> },
   { id: 6, label: "Quản lý bình luận",link: "/app/review", icon: <CommentIcon /> },
   { id: 7, label: "Quản lý người dùng", link: "/app/user", icon: <UserIcon /> },
-  { id: 8, label: "Support", link: "https://flatlogic.com/forum", icon: <SupportIcon /> },
+  { id: 8, label: "Xuất báo cáo ngày", link: "/app/report/", icon: <Download /> },
   { id: 9, label: "FAQ", link: "https://flatlogic.com/forum", icon: <FAQIcon /> },
-  // { id: 10, type: "divider" },
-  // { id: 11, type: "title", label: "PROJECTS" },
-  // {
-  //   id: 12,
-  //   label: "My recent",
-  //   link: "",
-  //   icon: <Dot size="small" color="warning" />,
-  // },
-  // {
-  //   id: 13,
-  //   label: "Starred",
-  //   link: "",
-  //   icon: <Dot size="small" color="primary" />,
-  // },
-  // {
-  //   id: 14,
-  //   label: "Background",
-  //   link: "",
-  //   icon: <Dot size="small" color="secondary" />,
-  // },
 ];
 
 function Sidebar({ location }) {

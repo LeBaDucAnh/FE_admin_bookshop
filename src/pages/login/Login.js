@@ -34,8 +34,8 @@ function Login(props) {
   var [error, setError] = useState(null);
   var [activeTabId, setActiveTabId] = useState(0);
   var [nameValue, setNameValue] = useState("");
-  var [loginValue, setLoginValue] = useState("admin@flatlogic.com");
-  var [passwordValue, setPasswordValue] = useState("password");
+  var [loginValue, setLoginValue] = useState("admin@gmail.com");
+  var [passwordValue, setPasswordValue] = useState("ducanh501");
 
   return (
     <Grid container className={classes.container}>
@@ -71,7 +71,7 @@ function Login(props) {
               </div> */}
               <Fade in={error}>
                 <Typography color="secondary" className={classes.errorMessage}>
-                  Something is wrong with your login or password :(
+                  Email hoặc mật khẩu không đúng :(
                 </Typography>
               </Fade>
               <TextField
@@ -85,7 +85,7 @@ function Login(props) {
                 value={loginValue}
                 onChange={e => setLoginValue(e.target.value)}
                 margin="normal"
-                placeholder="Email Adress"
+                placeholder="Email"
                 type="email"
                 fullWidth
               />
@@ -100,7 +100,7 @@ function Login(props) {
                 value={passwordValue}
                 onChange={e => setPasswordValue(e.target.value)}
                 margin="normal"
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 type="password"
                 fullWidth
               />
@@ -129,13 +129,13 @@ function Login(props) {
                     Đăng nhập
                   </Button>
                 )}
-                <Button
+                {/* <Button
                   color="primary"
                   size="large"
                   className={classes.forgetButton}
                 >
                   Quên mật khẩu
-                </Button>
+                </Button> */}
               </div>
             </React.Fragment>
           )}

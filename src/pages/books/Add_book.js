@@ -40,11 +40,11 @@ function AddBook() {
     formData.append('description', book.description);
     formData.append('unit_price', book.unit_price);
     formData.append('status', book.status);
-    formData.append('qty', book.qty);
+    formData.append('qty', book.total_qty);
     formData.append('total_qty', book.total_qty);
     formData.append('image', book.image);
-    formData.append('category', book.category);
-    formData.append('author', book.author);
+    formData.append('category', book.category.id);
+    formData.append('author', book.author.id);
     formData.append('publisher', book.publisher);
 
     fetch(BASE_URL + '/api/book/books/', {
@@ -64,6 +64,7 @@ function AddBook() {
           description: '',
           unit_price: '',
           status: 'IN STOCK',
+          qty: '',
           total_qty: '',
           image: null,
           category: null,
@@ -108,6 +109,18 @@ function AddBook() {
       {author.author_name}
     </option>
   ));
+
+  const handleCategoryChange = (event) => {
+    const categoryId = event.target.value;
+    const category = categories.find((c) => c.id === parseInt(categoryId));
+    setBook({ ...book, category });
+  };
+
+  const handleAuthorChange = (event) => {
+    const authorId = event.target.value;
+    const author = authors.find((a) => a.id === parseInt(authorId));
+    setBook({ ...book, author });
+  };
 
   const handleImageChange = (event) => {
     setBook({ ...book, image: event.target.files[0] });
@@ -184,7 +197,7 @@ function AddBook() {
           <Form.Label>Thể loại</Form.Label>
           <Form.Select name="category"
           value={book.category ? book.category.id : ''}
-          onChange={handleInputChange}>
+          onChange={handleCategoryChange}>
             <option value="">Chọn thể loại</option>
             {categoryOptions}
           </Form.Select>
@@ -194,8 +207,8 @@ function AddBook() {
           <Form.Label>Tác giả</Form.Label>
           <Form.Select name="author"
           value={book.author ? book.author.id : ''}
-          onChange={handleInputChange}>
-            <option value="">Chọn tác giẩ</option>
+          onChange={handleAuthorChange}>
+            <option value="">Chọn tác giả</option>
             {authorOptions}
           </Form.Select>
         </Form.Group>

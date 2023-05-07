@@ -35,7 +35,7 @@ const AddUserModal = (props) => {
   return (
     <Modal show={props.show} onHide={props.handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Thêm tác giả mới</Modal.Title>
+        <Modal.Title>Thêm người dùng mới</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>

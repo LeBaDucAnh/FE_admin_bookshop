@@ -5,12 +5,14 @@ import MUIDataTable from "mui-datatables";
 // import { Button } from "../../components/Wrappers/Wrappers";
 // components
 import PageTitle from "../../components/PageTitle/PageTitle";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import { BASE_URL } from "../../config";
 import axios from "axios";
 import EditTransactionModal from "./Update_order";
+import OrderDetail from "./Detailorder";
+import DeleteOrderModal from "./Delete_order";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -28,10 +30,13 @@ export default function Order() {
     const classes = useStyles();
     const [show, setShow] = useState(false);
     const [update, setUpdate] = useState(false);
+    const [del, setDel] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [transactionList, setTransactionList] = useState([]);
+    const [detail, setDetail] = useState(false);
+    const history = useHistory();
     
     useEffect(() => {
         const fetchData = async () => {
@@ -48,13 +53,32 @@ export default function Order() {
         setUpdate(false);
       };
     
+    const handleCloseDetail = () => {
+        setDetail(false);
+      };
+    const handleDeleteOrder = (transId) =>{
+        setSelectedOrderId(transId);
+        setDel(true);
+    }
+    const handleCloseDelete = () => {
+      setDel(false);
+    };
+    // const handleViewDetail = (rowData) => {
+    //     const id = rowData[0];
+    //     console.log('detail', id);
+    //     history.push(`/app/order/orderdetail/${id}`);
+    // };
+
     const handleEditOrder = (transactionId) => {
         setSelectedOrderId(transactionId);
         console.log(transactionId);
         setUpdate(true);
       };
-    
-      console.log("id: ",selectedOrderId);
+    const handleDetailOrder = (transid) => {
+        setSelectedOrderId(transid);
+        console.log(transid);
+        setDetail(true);
+      };
 
       const handleSaveProduct = () => {
         // Tải lại danh sách sản phẩm sau khi thêm thành công
@@ -140,11 +164,11 @@ export default function Order() {
                                                 text = "Chờ xác nhận"
                                                 color = 'orange';
                                                 break;
-                                            case 'Completed':
+                                            case 'COMPLETED':
                                                 text = "Thành công"
                                                 color = 'green';
                                                 break;
-                                            case 'Cancelled':
+                                            case 'CANCELED':
                                                 text = "Đã hủy"
                                                 color = 'red';
                                                 break;
@@ -169,13 +193,12 @@ export default function Order() {
                                         customBodyRender: (value, tableMeta, updateValue) => {
                                             return (
                                                 <div className={classes.buttonsContainer}>
-                                                    <Link to="/app/order/orderdetail">
                                                     <Button
                                                         variant="success"
-                                                        onClick={() => console.log("Detail")}
+                                                        onClick={() => handleDetailOrder(tableMeta.rowData[0])}
                                                     >
                                                         Chi tiết
-                                                    </Button></Link>
+                                                    </Button>
                                                     {" "}
                                                     <Button
                                                         variant="primary"
@@ -186,7 +209,7 @@ export default function Order() {
                                                     {" "}
                                                     <Button
                                                         variant="danger"
-                                                        onClick={handleShow}
+                                                        onClick={() => handleDeleteOrder(tableMeta.rowData[0])}
                                                     >Xóa</Button>
                                                 </div>
                                             );
@@ -208,24 +231,8 @@ export default function Order() {
                     />
 
                     <EditTransactionModal show={update} handleClose={handleCloseUpdate} handleSave={handleSaveProduct} transactionID={selectedOrderId} />
-
-                    <Modal show= {show} onHide ={handleClose} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Xác nhận xóa</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            Bạn chắc chắn xóa trường dữ liệu này?
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary" onClick={handleClose}>
-                                Đồng ý
-                            </Button>
-                            {" "}
-                            <Button variant="secondary" onClick={handleClose}>
-                                Hủy
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
+                    <OrderDetail show={detail} handleClose={handleCloseDetail} transid={selectedOrderId}/>
+                    <DeleteOrderModal show={del} handleClose={handleCloseDelete} transId = {selectedOrderId}/>
                 </Grid>
             </Grid>
         </>

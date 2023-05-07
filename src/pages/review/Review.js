@@ -17,7 +17,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@material-ui/icons";
-
+import DeleteReviewModal from "./Delete_review";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -31,6 +31,7 @@ export default function Reviews() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [reviewList, setReviewList] = useState([]);
+    const [reviewSelected, setReviewSeleted] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,6 +42,11 @@ export default function Reviews() {
     }, []);
     console.log(reviewList);
     console.log();
+
+    const handleDelete = (reviewId) =>{
+        setReviewSeleted(reviewId);
+        setShow(true);
+    }
 
     return (
         <>
@@ -97,19 +103,6 @@ export default function Reviews() {
                                 },
                               },
                               {
-                                name: "image",
-                                label: "Hình ảnh",
-                                options: {
-                                    filter: false,
-                                    sort: false,
-                                    customBodyRender: (value, tableMeta, updateValue) => {
-                                      return (
-                                        <img src={BASE_URL + value} alt={tableMeta.rowData[0]} style={{ width: 100 }} />
-                                      );
-                                    },
-                                  },
-                              },
-                              {
                                 name: "created_at",
                                 label: "Thời gian tạo",
                                 options: {
@@ -151,7 +144,7 @@ export default function Reviews() {
                                                     {" "}
                                                     <Button
                                                         variant="danger"
-                                                        onClick={handleShow}
+                                                        onClick={() => {handleDelete(tableMeta.rowData[0])}}
                                                     ><DeleteIcon/></Button>
                                                 </div>
                                             );
@@ -165,23 +158,7 @@ export default function Reviews() {
                             filterType: "checkbox",
                         }}
                     />
-                    <Modal show= {show} onHide ={handleClose} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Xác nhận xóa</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            Bạn chắc chắn xóa trường dữ liệu này?
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary" onClick={handleClose}>
-                                Đồng ý
-                            </Button>
-                            {" "}
-                            <Button variant="secondary" onClick={handleClose}>
-                                Hủy
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
+                    <DeleteReviewModal show={show} handleClose = {handleClose} reviewId={reviewSelected}/>
                 </Grid>
                 {/* <Grid item xs={12}>
                     <Widget title="Material-UI Table" upperTitle noBodyPadding bodyClass={classes.tableOverflow}>

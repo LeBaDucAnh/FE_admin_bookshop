@@ -18,6 +18,8 @@ import axios from "axios";
 import { BASE_URL } from "../../config";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@material-ui/icons";
 import AddAuthorModal from "./Add_author";
+import DeleteAuthorModal from "./Delete_author";
+import EditAuthorModal from "./Update_author";
 
 const useStyles = makeStyles(theme => ({
     tableOverflow: {
@@ -28,10 +30,11 @@ const useStyles = makeStyles(theme => ({
 export default function Authors() {
     const classes = useStyles();
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [update, setUpdate] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [authorList, setAuthorList] = useState([]);
+    const [del, setDel] = useState(false);
+    const [selectedAuthorId, setSelectedAuthorId] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,6 +44,10 @@ export default function Authors() {
         fetchData();
     }, []);
 
+    const handleCloseUpdate = () => {
+        setUpdate(false);
+      };
+
     const handleAddAuthor = () => {
         setShowModal(true);
       };
@@ -48,7 +55,19 @@ export default function Authors() {
       const handleCloseModal = () => {
         setShowModal(false);
       };
+      const handleCloseDelte = () =>{
+        setDel(false);
+      }
 
+      const handleEditAuthor = (authorId) => {
+        setSelectedAuthorId(authorId);
+        setUpdate(true);
+      };
+  
+      const handleDeleteAuthor = (authorId) => {
+        setSelectedAuthorId(authorId);
+        setDel(true);
+      }
     return (
         <>
             <PageTitle title="Tác giả" />
@@ -132,17 +151,16 @@ export default function Authors() {
                                                         Chi tiết
                                                     </Button></Link> */}
                                                     {" "}
-                                                    <Link to="/app/author/updateauthor">
                                                     <Button
                                                         variant="primary"
-                                                        onClick={() => console.log("Update")}
+                                                        onClick={() => handleEditAuthor(tableMeta.rowData[0])}
                                                     >
                                                         <EditIcon/>
-                                                    </Button></Link>
+                                                    </Button>
                                                     {" "}
                                                     <Button
                                                         variant="danger"
-                                                        onClick={handleShow}
+                                                        onClick={() => handleDeleteAuthor(tableMeta.rowData[0])}
                                                     ><DeleteIcon/></Button>
                                                 </div>
                                             );
@@ -164,29 +182,9 @@ export default function Authors() {
                     />
 
                     <AddAuthorModal show={showModal} handleClose={handleCloseModal}/>
-                    <Modal show= {show} onHide ={handleClose} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Xác nhận xóa</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            Bạn chắc chắn xóa trường dữ liệu này?
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary" onClick={handleClose}>
-                                Đồng ý
-                            </Button>
-                            {" "}
-                            <Button variant="secondary" onClick={handleClose}>
-                                Hủy
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
+                    <EditAuthorModal show={update} handleClose={handleCloseUpdate} authorId={selectedAuthorId}/>
+                    <DeleteAuthorModal show={del} handleClose={handleCloseDelte} authorId={selectedAuthorId}/>
                 </Grid>
-                {/* <Grid item xs={12}>
-                    <Widget title="Material-UI Table" upperTitle noBodyPadding bodyClass={classes.tableOverflow}>
-                        <Table data={mock.table} />
-                    </Widget>
-                </Grid> */}
             </Grid>
         </>
     );
