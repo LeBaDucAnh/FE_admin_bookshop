@@ -60,7 +60,7 @@ const structure = [
   { id: 6, label: "Quản lý bình luận",link: "/app/review", icon: <CommentIcon /> },
   { id: 7, label: "Quản lý người dùng", link: "/app/user", icon: <UserIcon /> },
   { id: 8, label: "Xuất báo cáo ngày", link: "/app/report/", icon: <Download /> },
-  { id: 9, label: "FAQ", link: "https://flatlogic.com/forum", icon: <FAQIcon /> },
+  // { id: 9, label: "FAQ", link: "https://flatlogic.com/forum", icon: <FAQIcon /> },
 ];
 
 function Sidebar({ location }) {

@@ -23,7 +23,11 @@ const EditCustomerModal = (props) => {
         fullname: fullName,
         email: email,
     };
-    axios.put(`${BASE_URL}/customer/${props.customerID}/`, data)
+    axios.put(`${BASE_URL}/customer/${props.customerID}/`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
       .then(response => {
         console.log(response);
         props.handleClose();

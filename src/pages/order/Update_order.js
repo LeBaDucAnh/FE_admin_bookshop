@@ -27,7 +27,12 @@ const EditTransactionModal = (props) => {
       status: status,
       phone: phone,
     };
-    axios.put(`${BASE_URL}/api/transaction/transaction/${props.transactionID}/`, data)
+    axios.put(`${BASE_URL}/api/transaction/transaction/${props.transactionID}/`, data,
+    {headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+    )
       .then(response => {
         props.handleClose();
         window.location.reload();

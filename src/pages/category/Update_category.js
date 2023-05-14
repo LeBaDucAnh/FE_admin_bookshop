@@ -18,7 +18,11 @@ const EditCategoryModal = (props) => {
 
   const handleUpdateCategory = () => {
     const updatedCategory = { category_name: categoryName};
-    axios.put(`${BASE_URL}/api/category/categories/${props.categoryID}/`, updatedCategory)
+    axios.put(`${BASE_URL}/api/category/categories/${props.categoryID}/`, updatedCategory, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
       .then(response => {
         console.log(response);
         props.handleClose();

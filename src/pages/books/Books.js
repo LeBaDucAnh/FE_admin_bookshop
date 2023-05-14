@@ -104,7 +104,7 @@ export default function Books() {
                             },
                             {
                                 name: "unit_price",
-                                label: "Đơn giá",
+                                label: "Đơn giá (VNĐ)",
                                 options: {
                                     filter: false,
                                     sort: true,

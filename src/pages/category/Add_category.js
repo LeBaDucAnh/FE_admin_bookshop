@@ -9,7 +9,11 @@ const AddCategoryModal = (props) => {
   const handleAddCategory = () => {
     const newCateogry = { category_name: categoryName};
     console.log(newCateogry);
-    axios.post(BASE_URL+'/api/category/categories/', newCateogry)
+    axios.post(BASE_URL+'/api/category/categories/', newCateogry,{
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
       .then(response => {
         console.log(response);
         props.handleClose();

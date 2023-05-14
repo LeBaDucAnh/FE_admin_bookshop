@@ -9,11 +9,12 @@ function Report() {
   // Khởi tạo state
   const [revenue, setRevenue] = useState(null);
   const [books, setBooks] = useState(null);
-  const date = new Date();
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear().toString();
-  const formattedDate = `${day}/${month}/${year}`;
+  const [orders, setOrders] = useState(null);
+  // const date = new Date();
+  // const day = date.getDate().toString().padStart(2, '0');
+  // const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  // const year = date.getFullYear().toString();
+  // const formattedDate = `${day}/${month}/${year}`;
   // Hàm xử lý khi click nút xuất Excel
   const handleExportExcel = () => {
 
@@ -22,7 +23,8 @@ function Report() {
 
     // Tạo worksheet cho doanh thu
     const revenueData = [['Ngày', 'Doanh thu']];
-    revenueData.push([formattedDate, revenue]);
+    orders.forEach(order => revenueData.push([order.date, order.reven]));
+    // revenueData.push([formattedDate, revenue]);
     const revenueWs = XLSX.utils.aoa_to_sheet(revenueData);
     XLSX.utils.book_append_sheet(wb, revenueWs, 'Doanh thu');
 
@@ -33,7 +35,7 @@ function Report() {
     XLSX.utils.book_append_sheet(wb, booksWs, 'Sách');
 
     // Xuất file Excel
-    XLSX.writeFile(wb, formattedDate + '_report.xlsx');
+    XLSX.writeFile(wb, 'report.xlsx');
   };
 
   // Gọi API để lấy dữ liệu
@@ -41,6 +43,7 @@ function Report() {
     axios.get(BASE_URL + '/api/order/report/')
       .then(response => {
         setRevenue(response.data.revenue);
+        setOrders(response.data.order_data);
         setBooks(response.data.books);
       })
       .catch(error => console.error(error));
@@ -52,7 +55,7 @@ function Report() {
   // Hiển thị dữ liệu và nút xuất Excel
   return (
     <div>
-      {revenue && <h3>Doanh thu {formattedDate}: {revenue} VNĐ</h3>}
+      <h3>Tổng doanh thu: {revenue} VNĐ</h3>
       {books && (
         <>
           <h3>Số lượng sách trong kho</h3>

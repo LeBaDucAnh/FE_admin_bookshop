@@ -19,7 +19,11 @@ const AddUserModal = (props) => {
         password: password,
     };
     console.log(data);
-    axios.post(BASE_URL+'/customers/', data)
+    axios.post(BASE_URL+'/customers/', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
       .then(response => {
         console.log(response);
         props.handleClose();

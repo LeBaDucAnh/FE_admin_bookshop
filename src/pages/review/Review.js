@@ -111,7 +111,7 @@ export default function Reviews() {
                                 },
                               },
                               {
-                                name: "uploaded_at",
+                                name: "updated_at",
                                 label: "Thời gian cập nhật",
                                 options: {
                                   filter: false,
@@ -145,7 +145,7 @@ export default function Reviews() {
                                                     <Button
                                                         variant="danger"
                                                         onClick={() => {handleDelete(tableMeta.rowData[0])}}
-                                                    ><DeleteIcon/></Button>
+                                                    >Xóa</Button>
                                                 </div>
                                             );
                                         }
@@ -156,6 +156,12 @@ export default function Reviews() {
                         }
                         options={{
                             filterType: "checkbox",
+                            selectableRows: "none",
+                            responsive: "standard",
+                            filter: true,
+                            search: true,
+                            pagination: true,
+                            rowsPerPageOptions: [5, 10, 20],
                         }}
                     />
                     <DeleteReviewModal show={show} handleClose = {handleClose} reviewId={reviewSelected}/>

@@ -5,10 +5,12 @@ import Row from 'react-bootstrap/Row';
 import React, { useState, useEffect } from 'react';
 import PageTitle from "../../components/PageTitle";
 import { BASE_URL } from '../../config';
+import { useHistory } from 'react-router-dom';
 
 
 function AddBook() {
   var FormData = require('form-data');
+  const history = useHistory();
   const [book, setBook] = useState({
     book_name: '',
     dimensions: '',
@@ -46,7 +48,7 @@ function AddBook() {
     formData.append('category', book.category.id);
     formData.append('author', book.author.id);
     formData.append('publisher', book.publisher);
-
+    console.log(formData);
     fetch(BASE_URL + '/api/book/books/', {
       method: 'POST',
       body: formData,
@@ -71,6 +73,7 @@ function AddBook() {
           author: null,
           publisher: '',
         });
+        history.push('/app/books');
       })
       .catch((error) => {
         console.error('Error:', error);

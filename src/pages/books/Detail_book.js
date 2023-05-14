@@ -63,7 +63,7 @@ export default function DetailBook({ match }) {
                     </tr>
                     <tr>
                         <th>Đơn giá</th>
-                        <td>{bookDetail.unit_price}</td>
+                        <td>{bookDetail.unit_price} VNĐ</td>
                     </tr>
                     <tr>
                         <th>Trạng thái</th>
@@ -79,11 +79,11 @@ export default function DetailBook({ match }) {
                     </tr>
                     <tr>
                         <th>Thể loại</th>
-                        <td>{bookDetail.category.category_name}</td>
+                        <td>{bookDetail.category ? bookDetail.category.category_name:''}</td>
                     </tr>
                     <tr>
                         <th>Tác giả</th>
-                        <td>{bookDetail.author.author_name}</td>
+                        <td>{bookDetail.author ? bookDetail.author.author_name:''}</td>
                     </tr>
                     <tr>
                         <th>Hình ảnh</th>

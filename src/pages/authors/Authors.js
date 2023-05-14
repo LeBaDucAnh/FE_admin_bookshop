@@ -143,25 +143,17 @@ export default function Authors() {
                                         customBodyRender: (value, tableMeta, updateValue) => {
                                             return (
                                                 <div className={classes.buttonsContainer}>
-                                                    {/* <Link to="/app/author/detailauthor">
-                                                    <Button
-                                                        variant="success"
-                                                        onClick={() => console.log("Detail")}
-                                                    >
-                                                        Chi tiết
-                                                    </Button></Link> */}
-                                                    {" "}
                                                     <Button
                                                         variant="primary"
                                                         onClick={() => handleEditAuthor(tableMeta.rowData[0])}
                                                     >
-                                                        <EditIcon/>
+                                                        Sửa
                                                     </Button>
                                                     {" "}
                                                     <Button
                                                         variant="danger"
                                                         onClick={() => handleDeleteAuthor(tableMeta.rowData[0])}
-                                                    ><DeleteIcon/></Button>
+                                                    >Xóa</Button>
                                                 </div>
                                             );
                                         }

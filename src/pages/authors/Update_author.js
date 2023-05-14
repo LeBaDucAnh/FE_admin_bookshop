@@ -13,12 +13,10 @@ const EditAuthorModal = (props) => {
     setAuthorImage(file);
   };
 
-
   useEffect(() => {
     axios.get(`${BASE_URL}/api/author/authors/${props.authorId}/`)
       .then(response => {
         setAuthorName(response.data.author_name);
-        setAuthorImage(response.data.author_image);
         setDescription(response.data.description);
       })
       .catch(error => {
@@ -29,16 +27,18 @@ const EditAuthorModal = (props) => {
   const handleUpdateAuthor = () => {
     const updatedAuthor = {
        author_name: authorName,
-       author_image: authorImage,
        description: description
     };
+    if (authorImage) {
+      updatedAuthor['author_image'] = authorImage;
+    }
+    console.log(updatedAuthor);
     axios.put(`${BASE_URL}/api/author/author/${props.authorId}/`, updatedAuthor, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
       .then(response => {
-        console.log(response);
         props.handleClose();
         window.location.reload();
       })
@@ -60,7 +60,7 @@ const EditAuthorModal = (props) => {
           </Form.Group>
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>Chọn file ảnh tác giả</Form.Label>
-            <Form.Control type="file" value={authorImage} onChange={handleFileInputChange}/>
+            <Form.Control type="file" onChange={handleFileInputChange}/>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formGridAddress1">
             <Form.Label>Mô tả</Form.Label>

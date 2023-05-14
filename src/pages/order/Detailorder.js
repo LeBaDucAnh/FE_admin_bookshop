@@ -87,7 +87,7 @@ export default function OrderDetail(props) {
                     </tr>
                     <tr>
                         <th>Ghi chú</th>
-                        <td>{order.note}</td>
+                        <td>{orderDetail.message}</td>
                     </tr>
                     <tr>
                         <th>Ngày tạo</th>

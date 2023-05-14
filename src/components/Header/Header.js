@@ -236,14 +236,14 @@ export default function Header(props) {
               Admin
             </Typography>
           </div>
-          <MenuItem
+          {/* <MenuItem
             className={classNames(
               classes.profileMenuItem,
               classes.headerMenuItem,
             )}
           >
             <AccountIcon className={classes.profileMenuIcon} /> Profile
-          </MenuItem>
+          </MenuItem> */}
           {/* <MenuItem
             className={classNames(
               classes.profileMenuItem,

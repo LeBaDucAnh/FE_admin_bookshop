@@ -42,10 +42,10 @@ export default function OrderDetail({ match }) {
                         <th>Số điện thoại</th>
                         <td>{orderDetail.phone}</td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                         <th>Trạng thái</th>
                         <td>{orderDetail.status}</td>
-                    </tr>
+                    </tr> */}
                     <tr>
                         <th>Địa chỉ</th>
                         <td>{orderDetail.address}</td>
